@@ -26,7 +26,6 @@ __author__ = 'Michael-Ken Okolo, '
 __email__ = 'michaelken.okolo1@csu.fullerton.edu, '
 __maintainer__ = 'michaelkenokolo'
 
-
 def gradient_descent(x_data, y_data):
     m_current = b_current = 0
     iterations = 1000
