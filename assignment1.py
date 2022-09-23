@@ -17,8 +17,14 @@ def main():
     x_data = data_frame[["T", "P", "TC", "SV"]].to_numpy()
     y_data = data_frame["Idx"].to_numpy()
 
+    x_training = x_data[:-20] #beginning of vector minus the last 20
+    x_testing = x_data[-20:] #last 20 in the vector
+
+    y_training = y_data[:-20] #beginning of vector minus the last 20
+    y_testing = y_data[-20:] #last 20 in the vector
+
     reg = linear_model.LinearRegression()
-    reg.fit(x_data, y_data)
+    reg.fit(x_training, y_training)
     print(reg.coef_)
 
 
