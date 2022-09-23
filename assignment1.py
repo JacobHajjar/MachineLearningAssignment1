@@ -17,7 +17,8 @@ def main():
     y_data = data_frame["Idx"].to_numpy()
 
     reg = linear_model.LinearRegression()
-    
+    reg.fit(x_data, y_data)
+    print(reg.coef_)
 
 if __name__ == '__main__':
     main()
