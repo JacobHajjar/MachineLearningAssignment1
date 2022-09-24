@@ -1,14 +1,17 @@
 #!/usr/bin/env python3
 import sys
+import time
+import math
 import pandas as pd
 import numpy
 from sklearn import linear_model
+from sklearn.metrics import mean_squared_error, r2_score
 
 ''' develop the best predictive model based on the chemical engineering dataset'''
 
-__author__ = 'Jacob Hajjar, '
-__email__ = 'hajjarj@csu.fullerton.edu, '
-__maintainer__ = 'jacobhajjar'
+__author__ = 'Jacob Hajjar, Michael-Ken Okolo'
+__email__ = 'hajjarj@csu.fullerton.edu, michaelken.okolo1@csu.fullerton.edu'
+__maintainer__ = 'jacobhajjar, michaelkenokolo'
 
 
 def main():
@@ -16,21 +19,33 @@ def main():
     data_frame = pd.read_csv("Data1.csv")
     x_data = data_frame[["T", "P", "TC", "SV"]].to_numpy()
     y_data = data_frame["Idx"].to_numpy()
+    least_squares_with_libraries(x_data, y_data)
 
-    x_training = x_data[:-20] #beginning of vector minus the last 20
-    x_testing = x_data[-20:] #last 20 in the vector
+def least_squares_with_libraries(x_data, y_data):
 
-    y_training = y_data[:-20] #beginning of vector minus the last 20
-    y_testing = y_data[-20:] #last 20 in the vector
+    testing_separation_index = math.floor(len(x_data) * 0.8)
 
+    #separate 80% of the data to training
+    x_training = x_data[:testing_separation_index] 
+    x_testing = x_data[testing_separation_index:] 
+
+    y_training = y_data[:testing_separation_index]
+    y_testing = y_data[testing_separation_index:] 
+
+    #perform least squares regression
     reg = linear_model.LinearRegression()
+    starting_time = time.time()
     reg.fit(x_training, y_training)
+    finishing_time = time.time()
+    elapsed_time = finishing_time - starting_time
+    print(elapsed_time)
     print(reg.coef_)
 
+    #predict new values 
+    y_predicted = reg.predict(x_testing)
 
-__author__ = 'Michael-Ken Okolo, '
-__email__ = 'michaelken.okolo1@csu.fullerton.edu, '
-__maintainer__ = 'michaelkenokolo'
+    print("The root mean squared error is", mean_squared_error(y_testing, y_predicted))
+    print("The r squared score is", r2_score(y_testing, y_predicted))
 
 
 def gradient_descent(x_data, y_data):
