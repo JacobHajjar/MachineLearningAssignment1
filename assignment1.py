@@ -7,7 +7,7 @@ import numpy as np
 from numpy import random
 from sklearn import linear_model
 from sklearn.metrics import mean_squared_error, r2_score
-from sklearn.preprocessing import StandardScaler
+import matplotlib.pyplot as plt
 
 ''' develop the best predictive model based on the chemical engineering dataset'''
 
@@ -26,7 +26,7 @@ def main():
     testing_separation_index = math.floor(len(x_data) * 0.8)
 
     least_squares_with_libraries(x_data, y_data, testing_separation_index)
-    gradient_descent(x_data, y_data, testing_separation_index)
+    stochastic_gradient_descent(x_data, y_data, testing_separation_index)
 
 
 def least_squares_with_libraries(x_data, y_data, testing_separation_index):
@@ -54,52 +54,55 @@ def least_squares_with_libraries(x_data, y_data, testing_separation_index):
 
 
 # still need to fix
-def gradient_descent(x_data, y_data, testing_separation_index):
-    # standardize x_data
-    sc = StandardScaler()
-    sc.fit_transform(x_data)
-
-    # Linear regression using training data
+def stochastic_gradient_descent(x_data, y_data, testing_separation_index):
+    # separate 80% of the data to training
     x_training = x_data[:testing_separation_index]
-    # x_testing = x_data[testing_separation_index:]
+    x_testing = x_data[testing_separation_index:]
 
     y_training = y_data[:testing_separation_index]
     y_testing = y_data[testing_separation_index:]
 
-    reg = linear_model.LinearRegression()
-    reg.fit(x_training, y_training)
+    number_of_features = x_training.shape[1]  # 4 features
 
     # perform gradient descent method
-    m_current = np.random.randn(x_data.shape[1])
-    b_current = 0
-    iterations = 100
-    n = len(x_data)
-    learning_rate = 0.01
+    w = np.ones(shape=number_of_features)  # shape [1. 1. 1. 1.]
+    b = 0
+    total_samples = x_training.shape[0]  # N = total_samples
+    epochs = 100000  # number of iterations
+    learning_rate = 0.5
 
-    for i in range(iterations + 1):
+    cost_list = []
+    epoch_list = []
+
+    for i in range(epochs + 1):
+        # separate 80% of the data to training
+        random_index = random.randint(0, total_samples - 1)
+        sample_x = x_training[random_index]
+        sample_y = y_training[random_index]
+
         # Make predictions for y = mx + b
-        y_predicted = m_current * x_data + b_current
+        y_predicted = np.dot(w, sample_x.T) + b
+
+        # Calculate the gradients for weight(w) and bias(b)
+        m_grad = -(2 / total_samples) * (sample_x.T.dot(sample_y - y_predicted))
+        b_grad = -(2 / total_samples) * np.sum(sample_y - y_predicted)
+
+        # Update the current weight(w) and bias(b)
+        w = w - learning_rate * m_grad
+        b = b - learning_rate * b_grad
 
         # Calculate the cost
-        cost = (1 / n) * sum([val ** 2 for val in (y_data[i] - y_predicted[i])])
+        cost = np.square(sample_y - y_predicted)
 
-        # Calculate the gradients for weight and bias
-        md = -(2 / n) * sum(x_data[i] * (y_data[i] - y_predicted[i]))
-        bd = -(2 / n) * sum(y_data[i] - y_predicted[i])
+        if i % 1000 == 0:
+            cost_list.append(cost)
+            epoch_list.append(i)
 
-        # Update the current weight and bias
-        m_current = m_current - learning_rate * md
-        b_current = b_current - learning_rate * bd
-        print("m: {}, b: {}, iteration: {}, cost: {}".format(m_current, b_current, i, cost))
-
-    print(y_predicted.shape)  # shape should be (420000,)
-
-    # issues with calculations due to inconsistent shapes
-    # input variables with inconsistent numbers of samples: [84000, 420000]
-    print("The root mean squared error is", mean_squared_error(y_testing, y_predicted))
-    print("The r squared score is", r2_score(y_testing, y_predicted))
+    # unsure if this value is correct, but set the iterations to 100,000 and got this.
+    print("m: {}, b: {}, epoch: {}, cost: {}".format(w, b, i, cost))
+    # print("The root mean squared error is", mean_squared_error(y_testing, y_predicted))
+    # print("The r squared score is", r2_score(y_training, y_predicted))
 
 
 if __name__ == '__main__':
     main()
-
