@@ -61,20 +61,17 @@ def gradient_descent(x_data, y_data):
 
     # perform gradient descent method
     reg = linear_model.LinearRegression()
+    starting_time = time.time()
     reg.fit(x_training, y_training)
 
-    # what I tried before
-    # number_of_features = x_training.shape[1]  # 4 features
-    # np.ones(shape=number_of_features)  # [1. 1. 1. 1.]
-    w = reg.coef_  # [ 4.02221271e-02 -3.35092349e-03 -3.07098991e+01 -5.85740077e-02]
+    w = reg.coef_
     b = reg.intercept_
-    print(reg.intercept_)  # 67.60085673297215
-    learning_rate = 0.01  # initial learning rate
-    num_iterations = 1000  # number of iterations or epoch
-    total_samples = x_training.shape[0]  # N = total_samples
+    learning_rate = 0.01
+    num_iterations = 1000
+    total_samples = x_training.shape[0]
 
     for i in range(num_iterations + 1):
-        # Make predictions using dot product between weight(w) and x_testing samples
+        # Make predictions using dot product between weight(w) and x_testing
         y_predicted = np.dot(w, x_testing.T) + b
 
         # Calculate gradients for weight(w) and bias(b)
@@ -88,11 +85,13 @@ def gradient_descent(x_data, y_data):
         # Calculate the cost between y_training samples and y_predicted
         cost = np.square(y_training[i] - y_predicted[i])
 
-    # Values might be incorrect
     print("w: {}, b: {}, iteration: {}, cost: {}".format(w, b, i, cost))
 
-    # Values are incorrect, still issues with calculations. (targets: 0 < RMSE < 1. and 0 < R2 < 1)
-    print("RMSE: ", mean_squared_error(y_testing, y_predicted))
+    finishing_time = time.time()
+    elapsed_time = finishing_time - starting_time
+    print(elapsed_time)
+
+    print("Root Mean Square Error: ", mean_squared_error(y_testing, y_predicted))
     print("R2: ", r2_score(y_testing, y_predicted))
 
 
