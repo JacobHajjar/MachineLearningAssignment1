@@ -4,7 +4,6 @@ import time
 import math
 import pandas as pd
 import numpy as np
-from numpy import random
 from sklearn import linear_model
 from sklearn.metrics import mean_squared_error, r2_score
 
@@ -52,7 +51,7 @@ def least_squares_with_libraries(x_data, y_data):
 
 # still need to fix
 def gradient_descent(x_data, y_data):
-    # separate 70% of the data to training
+    # separate 80% of the data to training
     testing_separation_index = math.floor(len(x_data) * 0.8)
     x_training = x_data[:testing_separation_index]
     x_testing = x_data[testing_separation_index:]
@@ -68,7 +67,8 @@ def gradient_descent(x_data, y_data):
     # number_of_features = x_training.shape[1]  # 4 features
     # np.ones(shape=number_of_features)  # [1. 1. 1. 1.]
     w = reg.coef_  # [ 4.02221271e-02 -3.35092349e-03 -3.07098991e+01 -5.85740077e-02]
-    b = 0
+    b = reg.intercept_
+    print(reg.intercept_)  # 67.60085673297215
     learning_rate = 0.01  # initial learning rate
     num_iterations = 1000  # number of iterations or epoch
     total_samples = x_training.shape[0]  # N = total_samples
