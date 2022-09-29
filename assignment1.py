@@ -4,7 +4,7 @@ import time
 import math
 import pandas as pd
 import numpy as np
-from sklearn import linear_model
+from sklearn import linear_model, preprocessing
 from sklearn.metrics import mean_squared_error, r2_score
 
 ''' develop the best predictive model based on the chemical engineering dataset'''
@@ -64,21 +64,19 @@ def gradient_descent(x_data, y_data):
     y_testing = y_data[testing_separation_index:]
 
     # perform gradient descent method
-    starting_time = time.time()
-
     w = np.random.randn(x_data.shape[1])
     b = 0
-    learning_rate = 0.01
-    num_iterations = 1000
+    learning_rate = 0.001
+    num_iterations = 10000
     total_samples = x_training.shape[0]
 
     for i in range(num_iterations + 1):
         # Make predictions using dot product between weight(w) and x_testing
-        y_predicted = np.dot(w, x_testing.T) + b
+        y_predicted = w * x_testing + b
 
         # Calculate gradients for weight(w) and bias(b)
-        w_grad = -(2 / total_samples) * (x_training[i].T.dot(y_training[i] - y_predicted[i]))
-        b_grad = -(2 / total_samples) * np.sum(y_training[i] - y_predicted[i])
+        w_grad = -(1 / total_samples) * (x_training[i].T.dot(y_training[i] - y_predicted[i]))
+        b_grad = -(1 / total_samples) * np.sum(y_training[i] - y_predicted[i])
 
         # Update the current weight(w) and bias(b)
         w = w - learning_rate * w_grad
@@ -89,10 +87,7 @@ def gradient_descent(x_data, y_data):
 
     print("w: {}, b: {}, iteration: {}, cost: {}".format(w, b, i, cost))
 
-    finishing_time = time.time()
-    elapsed_time = finishing_time - starting_time
-    print(elapsed_time)
-
+    print(y_testing, y_predicted)
     print("Root Mean Square Error: ", mean_squared_error(y_testing, y_predicted))
     print("R2: ", r2_score(y_testing, y_predicted))
 
