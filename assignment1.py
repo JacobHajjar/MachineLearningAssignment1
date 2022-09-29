@@ -60,12 +60,10 @@ def gradient_descent(x_data, y_data):
     y_testing = y_data[testing_separation_index:]
 
     # perform gradient descent method
-    reg = linear_model.LinearRegression()
     starting_time = time.time()
-    reg.fit(x_training, y_training)
 
-    w = reg.coef_
-    b = reg.intercept_
+    w = np.random.randn(x_data.shape[1])
+    b = 0
     learning_rate = 0.01
     num_iterations = 1000
     total_samples = x_training.shape[0]
