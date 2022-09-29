@@ -43,10 +43,14 @@ def least_squares_with_libraries(x_data, y_data):
     print(reg.coef_)
 
     # predict new values
-    y_predicted = reg.predict(x_testing)
+    y_predicted_test = reg.predict(x_testing)
+    y_predicted_training = reg.predict(x_training)
 
-    print("The root mean squared error is", mean_squared_error(y_testing, y_predicted))
-    print("The r squared score is", r2_score(y_testing, y_predicted))
+    print("The root mean squared error for the testing data is", mean_squared_error(y_testing, y_predicted_test))
+    print("The r squared score for the testing data is", r2_score(y_testing, y_predicted_test))
+
+    print("The root mean squared error for the training data is", mean_squared_error(y_training, y_predicted_training))
+    print("The r squared score for the training data is", r2_score(y_training, y_predicted_training))
 
 
 # still need to fix
