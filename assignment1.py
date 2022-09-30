@@ -63,7 +63,6 @@ def least_squares_with_libraries(x_data, y_data):
     print("The r squared score for the training data is", r2_score(y_training, y_predicted_training))
 
 
-# still need to fix
 def gradient_descent(x_data, y_data):
     # separate 80% of the data to training
     testing_separation_index = math.floor(len(x_data) * 0.8)
@@ -103,16 +102,14 @@ def gradient_descent(x_data, y_data):
 
 
 def standard_scale(x_data, y_data):
-
-# separate 80% of the data to training
-
+    # separate 80% of the data to training
     testing_separation_index = math.floor(len(x_data) * 0.8)
     x_training = x_data[:testing_separation_index]
     x_testing = x_data[testing_separation_index:]
 
-    #Scaling the data using Standard Scaler (Data Standardization)
+    # Scaling the data using Standard Scaler (Data Standardization)
     scaler = StandardScaler()
-    X_train_scale = scaler.fit_transform(x_training) 
+    X_train_scale = scaler.fit_transform(x_training)
 
     # Printing a row of data(featured) to show before and after scaling data
     print("Before Scaling: ", x_training[0])
@@ -127,15 +124,14 @@ def standard_scale(x_data, y_data):
     reg.fit(X_train_scale, y_training)
     finishing_time = time.time()
     elapsed_time = finishing_time - starting_time
-    print("Elapsed Time: ",elapsed_time)
+    print("Elapsed Time: ", elapsed_time)
 
     # predict new values for test dataset
-    X_test_scale = scaler.transform(x_testing) 
+    X_test_scale = scaler.transform(x_testing)
     y_predicted = reg.predict(X_test_scale)
 
-    #predicitng target for training data
+    # predicting target for training data
     y_train_predicted = reg.predict(X_train_scale)
-
 
     print("The test root mean squared error is", mean_squared_error(y_testing, y_predicted))
     print("The test r squared score is", r2_score(y_testing, y_predicted))
@@ -145,116 +141,112 @@ def standard_scale(x_data, y_data):
 
 
 def K_Fold_Func(X, y):
+    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.20)
 
-    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size = 0.20)
-
-#def Ridge_Model():
-    ridge = Ridge(alpha = 1.0)
+    # def Ridge_Model():
+    ridge = Ridge(alpha=1.0)
     mymodel = ridge.fit(X_test, y_test)
-    RidgeCV = cross_val_score(mymodel, X_test, y_test, scoring = 'r2', cv = 10)
-    print('K-fold CV (Ridge) -',RidgeCV)
-    print('Mean -',np.mean(RidgeCV))
+    RidgeCV = cross_val_score(mymodel, X_test, y_test, scoring='r2', cv=10)
+    print('K-fold CV (Ridge) -', RidgeCV)
+    print('Mean -', np.mean(RidgeCV))
 
-#def Lasso_Model():    
-    lasso =  Lasso(alpha =0.0001)
+    # def Lasso_Model():
+    lasso = Lasso(alpha=0.0001)
     mymodel1 = lasso.fit(X_test, y_test)
-    LassoCV = cross_val_score(mymodel1, X_test, y_test, scoring = 'r2', cv = 10)
-    print('K-fold CV (Lasso) -',LassoCV)
-    print('Mean -',np.mean(LassoCV))
+    LassoCV = cross_val_score(mymodel1, X_test, y_test, scoring='r2', cv=10)
+    print('K-fold CV (Lasso) -', LassoCV)
+    print('Mean -', np.mean(LassoCV))
 
-#def ElasticNet_Model():    
-    elasticnet = ElasticNet(alpha = 0.01)
+    # def ElasticNet_Model():
+    elasticnet = ElasticNet(alpha=0.01)
     mymodel2 = elasticnet.fit(X_test, y_test)
-    ElasticNetCV = cross_val_score(mymodel2, X_test, y_test, scoring = 'r2', cv = 10)
-    print('K-fold CV (Elastic-Net) -',ElasticNetCV)
-    print('Mean -',np.mean(ElasticNetCV))
+    ElasticNetCV = cross_val_score(mymodel2, X_test, y_test, scoring='r2', cv=10)
+    print('K-fold CV (Elastic-Net) -', ElasticNetCV)
+    print('Mean -', np.mean(ElasticNetCV))
 
 
-def Fitting_Model(x,y):
-    
+def Fitting_Model(x, y):
     global X_train
     global X_test
     global y_train
     global y_test
-    X_train,X_test,y_train,y_test=train_test_split(x,y,test_size=0.3)
+    X_train, X_test, y_train, y_test = train_test_split(x, y, test_size=0.3)
 
-    print (len(X_test), len(y_test))
+    print(len(X_test), len(y_test))
 
     lr = LinearRegression()
     lr.fit(X_train, y_train)
     Y_train_new = lr.predict(X_train)
     Y_test_new = lr.predict(X_test)
-    print(f'Linear Regression score {lr.score(X_train,y_train)} Linear Regression test score {lr.score(X_test,y_test)} ')
-    rmse = mean_squared_error(y_train, Y_train_new , squared=False)
+    print(
+        f'Linear Regression score {lr.score(X_train, y_train)} Linear Regression test score {lr.score(X_test, y_test)} ')
+    rmse = mean_squared_error(y_train, Y_train_new, squared=False)
     print(f'RMSE for linear regression {rmse}\n\n')
     # rmse = math.sqrt(mse)
 
-
-    start=time.time()
+    start = time.time()
     # lasso_reg= Lasso(alpha=0.0004)
     lasso_reg = Pipeline(steps=[
-    ('scaler',StandardScaler()),
-    ('Lasso',Lasso(alpha=0.01,random_state=1000))
+        ('scaler', StandardScaler()),
+        ('Lasso', Lasso(alpha=0.01, random_state=1000))
     ])
-    lasso_reg.fit(X_train,y_train)
-    end=time.time()
+    lasso_reg.fit(X_train, y_train)
+    end = time.time()
     # lasso_reg.fit(X_test,y_test)
-    print(f"Time taken by Lasso model to learned and train {end-start}")
-    lasso_reg_test_new= lasso_reg.predict(X_test)
-    lasso_reg_train_new= lasso_reg.predict(X_train)
-    lasso_reg_test_rmse=mean_squared_error(y_test,lasso_reg_test_new,squared=False)
-    lasso_reg_train_rmse=mean_squared_error(y_train,lasso_reg_train_new,squared=False)
-    lasso_reg_train_r2 = r2_score(y_train,lasso_reg_train_new)
-    lasso_reg_test_r2 = r2_score(y_test,lasso_reg_test_new)
-    print(f"Lasso_reg_train_RMSE: {lasso_reg_test_rmse}\nLasso_reg_test_RMSE: {lasso_reg_train_rmse}\nLasso test R2 Score: {lasso_reg_test_r2}\nLasso train R2 score {lasso_reg_train_r2}\n \n")
-
+    print(f"Time taken by Lasso model to learned and train {end - start}")
+    lasso_reg_test_new = lasso_reg.predict(X_test)
+    lasso_reg_train_new = lasso_reg.predict(X_train)
+    lasso_reg_test_rmse = mean_squared_error(y_test, lasso_reg_test_new, squared=False)
+    lasso_reg_train_rmse = mean_squared_error(y_train, lasso_reg_train_new, squared=False)
+    lasso_reg_train_r2 = r2_score(y_train, lasso_reg_train_new)
+    lasso_reg_test_r2 = r2_score(y_test, lasso_reg_test_new)
+    print(
+        f"Lasso_reg_train_RMSE: {lasso_reg_test_rmse}\nLasso_reg_test_RMSE: {lasso_reg_train_rmse}\nLasso test R2 Score: {lasso_reg_test_r2}\nLasso train R2 score {lasso_reg_train_r2}\n \n")
 
     start_ridge_time = time.time()
     # rr = Ridge(alpha=0.05, normalize=True)
     # Instantiate a lasso regressor: lasso
-    #lasso = Lasso(alpha=0.4, normalize=True)
+    # lasso = Lasso(alpha=0.4, normalize=True)
     rr = Pipeline(steps=[
-    ('scaler',StandardScaler()),
-    ('ridge',Ridge(alpha=0.01,random_state=1000))
+        ('scaler', StandardScaler()),
+        ('ridge', Ridge(alpha=0.01, random_state=1000))
     ])
     # higher the alpha value, more restriction on the coefficients; low alpha > more generalization,
     # in this case linear and ridge regression resembles
     rr.fit(X_train, y_train)
     end_ridge_time = time.time()
-    print(f'Time taken by ridge model to learned and train {end_ridge_time-start_ridge_time}')
-    rr_test_new= rr.predict(X_test)
-    rr_train_new= rr.predict(X_train)
+    print(f'Time taken by ridge model to learned and train {end_ridge_time - start_ridge_time}')
+    rr_test_new = rr.predict(X_test)
+    rr_train_new = rr.predict(X_train)
     rr_test_rmse = mean_squared_error(y_test, rr_test_new, squared=False)
     rr_train_rmse = mean_squared_error(y_train, rr_train_new, squared=False)
     print(f"ridge_test_RMSE: {rr_test_rmse}")
     print(f"ridge_train_RMSE: {rr_train_rmse}")
     # train_score=lr.score(X_train, y_train)
     # test_score=lr.score(X_test, y_test)
-    Ridge_test_r2_score = r2_score(y_test,rr_test_new)
-    Ridge_train_r2_score = r2_score(y_train,rr_train_new)
+    Ridge_test_r2_score = r2_score(y_test, rr_test_new)
+    Ridge_train_r2_score = r2_score(y_train, rr_train_new)
     print(f'Ridge test R2 Score {Ridge_test_r2_score}\nRidge train R2 Score {Ridge_train_r2_score}\n\n')
-
-
 
     start_elastic_time = time.time()
     # elastic_net = ElasticNet(alpha=0.01, random_state=1000)
     elastic_net = Pipeline(steps=[
-    ('scaler',StandardScaler()),
-    ('ridge',ElasticNet(alpha=0.01,random_state=1000))
+        ('scaler', StandardScaler()),
+        ('ridge', ElasticNet(alpha=0.01, random_state=1000))
     ])
     elastic_net.fit(X_train, y_train)
     end_elastic_time = time.time()
-    print(f'Time taken by elastic_net to learned and train {end_elastic_time-start_elastic_time}')
+    print(f'Time taken by elastic_net to learned and train {end_elastic_time - start_elastic_time}')
     # calculate the prediction and mean square error
     y_pred_elastic_test = elastic_net.predict(X_test)
     y_pred_elastic_train = elastic_net.predict(X_train)
     # mean_squared_error = np.mean((y_pred_elastic - y_test) ** 2)
-    elastic_net_test_R2_score= r2_score(y_test,y_pred_elastic_test)
-    elastic_net_train_R2_score= r2_score(y_train,y_pred_elastic_train)
+    elastic_net_test_R2_score = r2_score(y_test, y_pred_elastic_test)
+    elastic_net_train_R2_score = r2_score(y_train, y_pred_elastic_train)
     elastic_net_test_rmse = mean_squared_error(y_test, y_pred_elastic_test, squared=False)
     elastic_net_train_rmse = mean_squared_error(y_train, y_pred_elastic_train, squared=False)
-    print(f"elastic net test R2 score{elastic_net_test_R2_score}\nelastic net train R2 score{elastic_net_train_R2_score}\nelastic net test RMSE {elastic_net_test_rmse}\nelastic net train RMSE {elastic_net_train_rmse}")
-
+    print(
+        f"elastic net test R2 score{elastic_net_test_R2_score}\nelastic net train R2 score{elastic_net_train_R2_score}\nelastic net test RMSE {elastic_net_test_rmse}\nelastic net train RMSE {elastic_net_train_rmse}")
 
 
 # plt.plot(rr.coef_,alpha=0.7,linestyle='none',marker='*',markersize=5,color='red',label=r'Ridge; $\alpha = 1$',zorder=7)
