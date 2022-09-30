@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 import sys
+from telnetlib import theNULL
 import time
 import math
 import pandas as pd
@@ -20,7 +21,7 @@ def main():
     x_data = data_frame[["T", "P", "TC", "SV"]].to_numpy()
     y_data = data_frame["Idx"].to_numpy()
 
-    least_squares_with_libraries(x_data, y_data)
+    #least_squares_with_libraries(x_data, y_data)
     gradient_descent(x_data, y_data)
 
 
@@ -64,32 +65,34 @@ def gradient_descent(x_data, y_data):
     y_testing = y_data[testing_separation_index:]
 
     # perform gradient descent method
-    w = np.random.randn(x_data.shape[1])
-    b = 0
+    w = np.random.randn(x_data.shape[1] + 1)
     learning_rate = 0.001
     num_iterations = 10000
     total_samples = x_training.shape[0]
 
-    for i in range(num_iterations + 1):
-        # Make predictions using dot product between weight(w) and x_testing
-        y_predicted = w * x_testing + b
+    #for i in range(num_iterations + 1):
+    converged = False
+    prev_weight_change = [0, 0, 0, 0, 0]
+    while not converged:
+        for j_index, wj in enumerate(w):
+            sum_of_difference = 0
+            for i_index, x in enumerate(x_training):
+                padded_x = np.append(x, [1])
+                sum_of_difference += (((np.dot(w, padded_x) - y_training[i_index])) * padded_x[j_index])
+            weight_change = (learning_rate / total_samples) * sum_of_difference
+            w[j_index] = wj - weight_change
 
-        # Calculate gradients for weight(w) and bias(b)
-        w_grad = -(1 / total_samples) * (x_training[i].T.dot(y_training[i] - y_predicted[i]))
-        b_grad = -(1 / total_samples) * np.sum(y_training[i] - y_predicted[i])
+            if prev_weight_change[j_index] < 0 and weight_change > 0:
+                converged = True
+            else:
+                prev_weight_change[j_index] = weight_change
+    #print(w)
 
-        # Update the current weight(w) and bias(b)
-        w = w - learning_rate * w_grad
-        b = b - learning_rate * b_grad
+    #print("w: {}, b: {}, iteration: {}, cost: {}".format(w, b, i, cost))
 
-        # Calculate the cost between y_training samples and y_predicted
-        cost = np.square(y_training[i] - y_predicted[i])
-
-    print("w: {}, b: {}, iteration: {}, cost: {}".format(w, b, i, cost))
-
-    print(y_testing, y_predicted)
-    print("Root Mean Square Error: ", mean_squared_error(y_testing, y_predicted))
-    print("R2: ", r2_score(y_testing, y_predicted))
+    #print(y_testing, y_predicted)
+    #print("Root Mean Square Error: ", mean_squared_error(y_testing, y_predicted))
+    #print("R2: ", r2_score(y_testing, y_predicted))
 
 
 if __name__ == '__main__':
