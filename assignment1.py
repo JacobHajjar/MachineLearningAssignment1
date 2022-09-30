@@ -108,7 +108,6 @@ def gradient_descent(x_data, y_data):
 
     print("w: {}, b: {}, iteration: {}, cost: {}".format(w, b, i, cost))
 
-    # Values are incorrect, still issues with calculations. (targets: 0 < RMSE < 1. and 0 < R2 < 1)
     print("RMSE: ", mean_squared_error(y_testing, y_predicted))
     print("R2: ", r2_score(y_testing, y_predicted))
 
